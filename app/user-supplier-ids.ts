@@ -15,11 +15,13 @@ export async function callAPi(userIds: string, access_token: string) {
           'Content-Type': 'application/json',
         },
       });
-
+      console.log("suplier", response.data.extension_2ea9d5d4dce241eebc89850ca76d6b8f_supplierID);
       const formattedData = {
         user_id: id,
         global_id: response.data.extension_2ea9d5d4dce241eebc89850ca76d6b8f_GlobalID,
-        supplier_id: response.data.extension_2ea9d5d4dce241eebc89850ca76d6b8f_supplierID.join(','),
+        supplier_id: response.data.extension_2ea9d5d4dce241eebc89850ca76d6b8f_supplierID
+        ? response.data.extension_2ea9d5d4dce241eebc89850ca76d6b8f_supplierID.join(',')
+        : null,
       };
 
       result.push(formattedData);
