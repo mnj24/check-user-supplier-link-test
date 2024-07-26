@@ -23,25 +23,26 @@ export default function Home() {
   };
 
   return (
-    <div className='h-screen w-full bg-gray-100 flex flex-row'>
-      <div className='flex-1 flex flex-row'>
-        <div className="flex bg-gray-800 flex-col items-center h-full w-1/2 justify-center">
-          <div className="flex items-center space-x-4 mb-6 bg-gray-800 p-4 rounded">
-            <img src="./ahold_Logo.png" alt="Ahold Logo 1" className='h-12'/>
-            <img src="./MIT Top logo (1).svg" alt="Ahold Logo 2" className='h-12'/>
-          </div>
-          <h1 className='font-semibold text-white-800 text-lg my-4'>Check User - Supplier Link</h1>
-          <form onSubmit={handleSubmit} className='flex flex-col space-y-10 '>
+    <div className='h-screen w-full bg-gray-100 flex'>
+      {/* Left Side */}
+      <div className='w-1/2 bg-gray-800 flex flex-col items-center p-4'>
+        <div className="flex items-center space-x-4 mb-6">
+          <img src="/ahold_Logo.png" alt="Ahold Logo 1" className='h-12'/>
+          <img src="/MIT Top logo (1).svg" alt="Ahold Logo 2" className='h-12'/>
+        </div>
+        <div className='flex flex-col items-center justify-center flex-grow'>
+          <h1 className='font-semibold text-white text-lg my-4 text-center'>Check User - Supplier Link</h1>
+          <form onSubmit={handleSubmit} className='flex flex-col space-y-10 w-full max-w-md'>
             <div className='flex flex-col'>
-              <label htmlFor="accessToken" className='text-white-800 text-sm font-semibold'>Access Token:</label>
+              <label htmlFor="accessToken" className='text-white text-sm font-semibold'>Access Token:</label>
               <textarea
                 className='bg-white text-black p-2 border rounded'
                 onChange={(e) => setAccessToken(e.target.value)}
                 required
               />
             </div>
-            <div className='flex flex-col '>
-              <label htmlFor="userIds" className='text-white-800 font-semibold text-sm'>User IDs (comma-separated):</label>
+            <div className='flex flex-col'>
+              <label htmlFor="userIds" className='text-white font-semibold text-sm'>User IDs (comma-separated):</label>
               <input
                 type="text"
                 id="userIds"
@@ -53,13 +54,17 @@ export default function Home() {
             </div>
             <button type="submit" className='bg-green-500 rounded-md text-sm p-2'>Submit</button>
           </form>
-          {error && <p className='text-red-500'>{error}</p>}
+          {error && <p className='text-red-500 mt-4'>{error}</p>}
         </div>
-        <div className='w-1/2 flex items-center justify-center bg-gray-700'>
-          {result && (
-            <div>
-              <h2 className='text-gray-800 text-lg font-bold text-center'>Results</h2>
-              <table className='min-w-full bg-white text-black border border-gray-300'>
+      </div>
+
+      {/* Right Side */}
+      <div className='flex-1 bg-gray-700 p-4 overflow-auto'>
+        {result && (
+          <div className='w-full h-full'>
+            <h2 className='text-white-800 text-lg font-bold text-center mb-4'>Results</h2>
+            <div className='overflow-y-auto h-full'>
+              <table className='min-w-full bg-gray text-white border border-black-300'>
                 <thead>
                   <tr>
                     <th className='py-2 px-4 border-b text-center'>User ID</th>
@@ -78,8 +83,8 @@ export default function Home() {
                 </tbody>
               </table>
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );
