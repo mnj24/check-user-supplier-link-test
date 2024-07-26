@@ -27,8 +27,8 @@ export default function Home() {
       {/* Left Side */}
       <div className='w-1/2 bg-gray-800 flex flex-col items-center p-4'>
         <div className="flex items-center space-x-4 mb-6">
-          <img src="/ahold_Logo.png" alt="Ahold Logo 1" className='h-12'/>
-          <img src="/MIT Top logo (1).svg" alt="Ahold Logo 2" className='h-12'/>
+          <img src="./ahold_Logo.png" alt="Ahold Logo 1" className='h-12'/>
+          <img src="./MIT Top logo (1).svg" alt="Ahold Logo 2" className='h-12'/>
         </div>
         <div className='flex flex-col items-center justify-center flex-grow'>
           <h1 className='font-semibold text-white text-lg my-4 text-center'>Check User - Supplier Link</h1>
