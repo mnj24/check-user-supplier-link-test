@@ -25,10 +25,9 @@ export default function Home() {
   return (
     <div className='h-screen w-full bg-gray-100 flex'>
       {/* Left Side */}
-      <div className='w-1/2 bg-gray-800 flex flex-col items-center p-4'>
-        <div className="flex items-center space-x-4 mb-6">
-          <img src="./ahold_Logo.png" alt="Ahold Logo 1" className='h-12'/>
-          <img src="./MIT Top logo (1).svg" alt="Ahold Logo 2" className='h-12'/>
+      <div className='w-1/2 bg-gray-800 flex flex-col items-center p-4 relative'>
+        <div className="flex items-center justify-center mt-6">
+          <img src="./ahold_Logo.png" alt="Ahold Logo 1" className='w-48'/>
         </div>
         <div className='flex flex-col items-center justify-center flex-grow'>
           <h1 className='font-semibold text-white text-lg my-4 text-center'>Check User - Supplier Link</h1>
@@ -55,6 +54,9 @@ export default function Home() {
             <button type="submit" className='bg-green-500 rounded-md text-sm p-2'>Submit</button>
           </form>
           {error && <p className='text-red-500 mt-4'>{error}</p>}
+        </div>
+        <div className='absolute bottom-4 right-4'>
+          <img src="./MIT Top logo (1).svg" alt="MIT Logo" className='h-6'/>
         </div>
       </div>
 
