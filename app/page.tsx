@@ -27,8 +27,8 @@ export default function Home() {
       <div className='flex-1 flex flex-row'>
         <div className="flex bg-gray-800 flex-col items-center h-full w-1/2 justify-center">
           <div className="flex items-center space-x-4 mb-6 bg-gray-800 p-4 rounded">
-            <img src="/ahold_logo.png" alt="Ahold Logo 1" className='h-12'/>
-            <img src="/MIT Top logo (1).svg" alt="Ahold Logo 2" className='h-12'/>
+            <img src="/public/ahold_logo.png" alt="Ahold Logo 1" className='h-12'/>
+            <img src="/public/MIT Top logo (1).svg" alt="Ahold Logo 2" className='h-12'/>
           </div>
           <h1 className='font-semibold text-white-800 text-lg my-4'>Check User - Supplier Link</h1>
           <form onSubmit={handleSubmit} className='flex flex-col space-y-10 '>
