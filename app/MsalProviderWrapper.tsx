@@ -9,7 +9,7 @@ const msalConfig = {
   auth: {
     clientId: "57f46a96-59bc-4016-b80e-81f0358865ee", // Replace with your actual client ID
     authority: "https://login.microsoftonline.com/manomanoj20outlook.onmicrosoft.com", // Replace with your actual tenant ID
-    redirectUri: "http://localhost:3000", // Replace with your actual redirect URI
+    redirectUri: "https://witty-sand-04e15040f.5.azurestaticapps.net", // Replace with your actual redirect URI
   },
 };
 
