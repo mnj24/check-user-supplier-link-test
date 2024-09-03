@@ -17,7 +17,7 @@ export async function callAPi(userIds: string, accessToken: string) {
   });
 
   for (const id of userIdList) {
-    const userId = `${id}@us.royalahold.net`;
+    const userId = `${id}@manomanoj20outlook.onmicrosoft.com`;
     
     try {
       const response = await client.api(`/users/${userId}`).get();
