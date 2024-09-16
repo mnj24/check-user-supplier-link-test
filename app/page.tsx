@@ -5,6 +5,7 @@ import { useMsal, useIsAuthenticated } from "@azure/msal-react";
 import Image from "next/image";
 import { callAPi } from "./user-supplier-ids"; // Adjust path as needed
 import { InteractionRequiredAuthError } from "@azure/msal-browser";
+import * as XLSX from "xlsx"; // Import xlsx library
 
 export default function Home() {
   const { instance, accounts } = useMsal();
@@ -64,16 +65,35 @@ export default function Home() {
   };
 
   const handleLogin = () => {
-    instance.loginPopup({ scopes: ["User.Read", "Mail.Read"] }).catch((e) => { // Update scopes as needed
+    instance.loginPopup({ scopes: ["User.Read", "User.Read.All"] }).catch((e) => {
       console.error(e);
     });
+  };
+
+  const handleLogout = () => {
+    instance.logoutPopup().then(() => {
+      setResult(null); // Clear the results
+      setAccessToken(null); // Clear access token
+      setUserIds(""); // Clear user inputs if needed
+    }).catch((e) => {
+      console.error(e);
+    });
+  };  
+
+  const handleExport = () => {
+    if (result) {
+      const worksheet = XLSX.utils.json_to_sheet(result);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Results");
+      XLSX.writeFile(workbook, "user_supplier_data.xlsx");
+    }
   };
 
   return (
     <div className="h-screen w-full bg-gray-100 flex">
       {/* Left Side */}
       <div className="w-1/2 bg-gray-800 flex flex-col items-center p-4 relative">
-        <div className="flex items-center justify-center mt-6">
+        <div className="flex items-end justify-between mt-6">
           <div className="w-48">
             <Image
               src="/ahold_Logo.png"
@@ -82,47 +102,65 @@ export default function Home() {
               height={108}
             />
           </div>
+          {isClient && isAuthenticated ? (
+  <div className="absolute top-3 right-4">
+    <button
+      onClick={handleLogout}
+      className="bg-gray-700 text-white rounded-md text-xs p-1"
+    >
+      Sign Out
+    </button>
+  </div>
+) : null}
+
+          
+          
         </div>
         <div className="flex flex-col items-center justify-center flex-grow">
           <h1 className="font-semibold text-white text-lg my-4 text-center">
             Check User - Supplier Link
           </h1>
-          {isClient && !isAuthenticated ? ( // Only render sign-in button if not authenticated
+          {isClient && !isAuthenticated ? (
             <button
               onClick={handleLogin}
-              className="bg-blue-500 rounded-md text-sm p-2 text-white"
+              className="bg-green-500 rounded-md text-sm p-2 text-white"
             >
               Sign In
             </button>
           ) : (
             isClient && (
-              <form
-                onSubmit={handleSubmit}
-                className="flex flex-col space-y-10 w-full max-w-md"
-              >
-                <div className="flex flex-col">
-                  <label
-                    htmlFor="userIds"
-                    className="text-white font-semibold text-sm"
-                  >
-                    User IDs (comma-separated):
-                  </label>
-                  <input
-                    type="text"
-                    id="userIds"
-                    className="bg-white text-black p-2 border rounded"
-                    value={userIds}
-                    onChange={(e) => setUserIds(e.target.value)}
-                    required
-                  />
-                </div>
-                <button
-                  type="submit"
-                  className="bg-green-500 rounded-md text-sm p-2"
+              <>
+                
+                <form
+                  onSubmit={handleSubmit}
+                  className="flex flex-col space-y-10 w-full max-w-md mt-4"
                 >
-                  Submit
-                </button>
-              </form>
+                  <div className="flex flex-col">
+                    <label
+                      htmlFor="userIds"
+                      className="text-white font-semibold text-sm"
+                    >
+                      User IDs (comma-separated):
+                    </label>
+                    <input
+                      type="text"
+                      id="userIds"
+                      className="bg-white text-black p-2 border rounded"
+                      value={userIds}
+                      onChange={(e) => setUserIds(e.target.value)}
+                      required
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    className="bg-green-500 rounded-md text-sm p-2"
+                  >
+                    Submit
+                  </button>
+                
+                
+                </form>
+              </>
             )
           )}
           {error && <p className="text-red-500 mt-4">{error}</p>}
@@ -143,9 +181,18 @@ export default function Home() {
       <div className="flex-1 bg-gray-700 p-4 overflow-auto">
         {result && (
           <div className="w-full h-full">
-            <h2 className="text-white-800 text-lg font-bold text-center mb-4">
-              Results
-            </h2>
+            {/* Flex container for Results and Export button */}
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-white-800 text-lg font-bold text-center">
+                Results
+              </h2>
+              <button
+                onClick={handleExport}
+                className="bg-gray-600 rounded-md text-sm p-2"
+              >
+                Export to Excel
+              </button>
+            </div>
             <div className="overflow-y-auto h-full">
               <table className="min-w-full bg-gray text-white border border-black-300">
                 <thead>
