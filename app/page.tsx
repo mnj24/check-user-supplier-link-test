@@ -23,7 +23,7 @@ export default function Home() {
     async function fetchToken() {
       try {
         const response = await fetch(
-          "http://169.254.169.254/metadata/identity/oauth2/token?api-version=2019-08-01&resource=https://graph.microsoft.com",
+          "https://169.254.169.254/metadata/identity/oauth2/token?api-version=2019-08-01&resource=https://graph.microsoft.com",
           {
             method: "GET",
             headers: {
