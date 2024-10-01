@@ -1,15 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useMsal, useIsAuthenticated } from "@azure/msal-react";
 import Image from "next/image";
 import { callAPi } from "./user-supplier-ids"; // Adjust path as needed
-import { InteractionRequiredAuthError } from "@azure/msal-browser";
 import * as XLSX from "xlsx"; // Import xlsx library
 
 export default function Home() {
-  const { instance, accounts } = useMsal();
-  const isAuthenticated = useIsAuthenticated();
   const [userIds, setUserIds] = useState("");
   const [result, setResult] = useState<
     Array<{ user_id: string; global_id: string; supplier_id: string }> | null
@@ -23,28 +19,32 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    if (isAuthenticated && accounts.length > 0) {
-      const request = {
-        scopes: ["User.Read", "User.Read.All"], // Update scopes as needed
-        account: accounts[0],
-      };
-
-      instance
-        .acquireTokenSilent(request)
-        .then((response) => {
-          setAccessToken(response.accessToken); // Set access token
-        })
-        .catch((error) => {
-          if (error instanceof InteractionRequiredAuthError) {
-            instance.acquireTokenPopup(request).then((response) => {
-              setAccessToken(response.accessToken); // Set access token after acquiring it interactively
-            });
-          } else {
-            console.error("Error acquiring token silently", error);
+    // Replace this with Managed Identity logic or client credentials flow
+    async function fetchToken() {
+      try {
+        const response = await fetch(
+          "http://169.254.169.254/metadata/identity/oauth2/token?api-version=2019-08-01&resource=https://graph.microsoft.com",
+          {
+            method: "GET",
+            headers: {
+              "Metadata": "true",
+            },
           }
-        });
+        );
+
+        if (response.ok) {
+          const tokenResponse = await response.json();
+          setAccessToken(tokenResponse.access_token); // Set access token
+        } else {
+          console.error("Error fetching token", response);
+        }
+      } catch (error) {
+        console.error("Error acquiring access token", error);
+      }
     }
-  }, [isAuthenticated, accounts, instance]);
+
+    fetchToken();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -63,22 +63,6 @@ export default function Home() {
       setError("An error occurred");
     }
   };
-
-  const handleLogin = () => {
-    instance.loginPopup({ scopes: ["User.Read", "User.Read.All"] }).catch((e) => {
-      console.error(e);
-    });
-  };
-
-  const handleLogout = () => {
-    instance.logoutPopup().then(() => {
-      setResult(null); // Clear the results
-      setAccessToken(null); // Clear access token
-      setUserIds(""); // Clear user inputs if needed
-    }).catch((e) => {
-      console.error(e);
-    });
-  };  
 
   const handleExport = () => {
     if (result) {
@@ -102,66 +86,41 @@ export default function Home() {
               height={108}
             />
           </div>
-          {isClient && isAuthenticated ? (
-  <div className="absolute top-3 right-4">
-    <button
-      onClick={handleLogout}
-      className="bg-gray-700 text-white rounded-md text-xs p-1"
-    >
-      Sign Out
-    </button>
-  </div>
-) : null}
-
-          
-          
         </div>
         <div className="flex flex-col items-center justify-center flex-grow">
           <h1 className="font-semibold text-white text-lg my-4 text-center">
             Check User - Supplier Link
           </h1>
-          {isClient && !isAuthenticated ? (
-            <button
-              onClick={handleLogin}
-              className="bg-green-500 rounded-md text-sm p-2 text-white"
-            >
-              Sign In
-            </button>
-          ) : (
-            isClient && (
-              <>
-                
-                <form
-                  onSubmit={handleSubmit}
-                  className="flex flex-col space-y-10 w-full max-w-md mt-4"
-                >
-                  <div className="flex flex-col">
-                    <label
-                      htmlFor="userIds"
-                      className="text-white font-semibold text-sm"
-                    >
-                      User IDs (comma-separated):
-                    </label>
-                    <input
-                      type="text"
-                      id="userIds"
-                      className="bg-white text-black p-2 border rounded"
-                      value={userIds}
-                      onChange={(e) => setUserIds(e.target.value)}
-                      required
-                    />
-                  </div>
-                  <button
-                    type="submit"
-                    className="bg-green-500 rounded-md text-sm p-2"
+          {isClient && (
+            <>
+              <form
+                onSubmit={handleSubmit}
+                className="flex flex-col space-y-10 w-full max-w-md mt-4"
+              >
+                <div className="flex flex-col">
+                  <label
+                    htmlFor="userIds"
+                    className="text-white font-semibold text-sm"
                   >
-                    Submit
-                  </button>
-                
-                
-                </form>
-              </>
-            )
+                    User IDs (comma-separated):
+                  </label>
+                  <input
+                    type="text"
+                    id="userIds"
+                    className="bg-white text-black p-2 border rounded"
+                    value={userIds}
+                    onChange={(e) => setUserIds(e.target.value)}
+                    required
+                  />
+                </div>
+                <button
+                  type="submit"
+                  className="bg-green-500 rounded-md text-sm p-2"
+                >
+                  Submit
+                </button>
+              </form>
+            </>
           )}
           {error && <p className="text-red-500 mt-4">{error}</p>}
         </div>
